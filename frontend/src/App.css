@@ -31,18 +31,18 @@
   padding: 10px;
 }
 
-.nav-ul{
+.nav-ul {
   padding: 5px;
   margin: 0;
   background-color: #61dafb;
 }
-.nav-ul li a{
+.nav-ul li a {
   color: #fff;
   padding: 5px;
   text-decoration: none;
 }
 
-.footer{
+.footer {
   position: absolute;
   bottom: 0;
   text-align: center;
@@ -52,7 +52,15 @@
   padding-bottom: 15px;
 }
 
-.form{
+.form {
   display: flex;
   justify-content: center;
+}
+
+.logo {
+  width: 45px;
+  float: left;
+  border-radius: 50%;
+  margin-top: 3px;
+  margin-left: 20px;
 }

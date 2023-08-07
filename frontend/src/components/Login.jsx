@@ -1,27 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const SignUp = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [pwd, setPwd] = useState("");
+const Login = () => {
+  const [email, setEmail] = React.useState("");
+  const [pwd, setpwd] = React.useState("");
+
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    let result = await fetch("http://localhost:5000/register", {
+  const handleLogin = async () => {
+    console.log(email, pwd);
+
+    let result = await fetch("http://localhost:5000/login", {
       method: "post",
-      body: JSON.stringify({ name, email, pwd }),
+      body: JSON.stringify({ email, pwd }),
       headers: {
         "content-type": "application/json",
       },
     });
     result = await result.json();
     console.log(result);
-    localStorage.setItem("user", JSON.stringify(result));
-    navigate("/");
+    if (result.name) {
+      localStorage.setItem("user", JSON.stringify(result));
+      navigate("/");
+    } else {
+      alert("Please Enyter a Correct result");
+    }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const auth = localStorage.getItem("user");
     if (auth) {
       navigate("/");
@@ -29,26 +35,12 @@ const SignUp = () => {
   });
 
   return (
-    <div className="">
+    <div>
       <div className="d-flex justify-content-center mb-3">
-        <h1>Register</h1>
+        <h1>Login</h1>
       </div>
       <div className="form">
         <form>
-          <div className="row mb-3">
-            <label htmlFor="inputname" className="col-sm-2 col-form-label">
-              Name
-            </label>
-            <div className="col-sm-10">
-              <input
-                type="text"
-                className="form-control"
-                id="inputname"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-          </div>
           <div className="row mb-3">
             <label htmlFor="inputEmail3" className="col-sm-2 col-form-label">
               Email
@@ -58,7 +50,6 @@ const SignUp = () => {
                 type="email"
                 className="form-control"
                 id="inputEmail3"
-                value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
@@ -69,21 +60,20 @@ const SignUp = () => {
             </label>
             <div className="col-sm-10">
               <input
-                type="text"
+                type="password"
                 className="form-control px-5"
                 id="inputPassword3"
-                value={pwd}
-                onChange={(e) => setPwd(e.target.value)}
+                onChange={(e) => setpwd(e.target.value)}
               />
             </div>
           </div>
           <div className="d-flex justify-content-center">
             <button
-              onClick={handleSubmit}
+              onClick={handleLogin}
               type="submit"
               className="btn btn-primary w-25 "
             >
-              Submit
+              Sign In
             </button>
           </div>
         </form>
@@ -92,4 +82,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Login;
