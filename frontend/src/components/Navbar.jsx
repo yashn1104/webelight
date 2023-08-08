@@ -9,14 +9,12 @@ const Navbar = () => {
     localStorage.clear();
     navigate("/signup");
   };
-  const img = "https://img.freepik.com/premium-vector/abstract-modern-ecommerce-logo-design-colorful-gradient-shopping-bag-logo-template_467913-995.jpg?w=2000"
+  const img =
+    "https://img.freepik.com/premium-vector/abstract-modern-ecommerce-logo-design-colorful-gradient-shopping-bag-logo-template_467913-995.jpg?w=2000";
 
   return (
     <div>
-      <img className="logo"
-      src={img}
-        alt="logo"
-      />
+      <img className="logo" src={img} alt="logo" />
       {auth ? (
         <ul className="nav-ul">
           <li>
@@ -24,9 +22,9 @@ const Navbar = () => {
           </li>
           <li>
             <Link to="/add">Add Product</Link>
-          </li> 
+          </li>
           <li>
-            <Link to="/update">Update Product</Link>
+            <Link to="/update/:id">Update Product</Link>
           </li>
           <li>
             <Link to="/profile">Profile</Link>

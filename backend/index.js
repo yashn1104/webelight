@@ -12,7 +12,6 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors());
-
 app.post("/register", async (req, res) => {
   let user = new User(req.body);
   let result = await user.save();
@@ -47,6 +46,49 @@ app.get("/product", async (req, res) => {
   } else {
     res.send({ result: "No Result Found" });
   }
+});
+
+app.delete("/delete/:id", async (req, res) => {
+  let result = await Product.deleteOne({ _id: req.params.id });
+  res.send(result);
+});
+
+app.get("/update/:id", async (req, res) => {
+  let result = await Product.findOne({ _id: req.params.id });
+  if (result) {
+    res.send(result);
+  } else {
+    res.send({ result: "No results Found" });
+  }
+});
+
+app.put("/update/:id", async (req, res) => {
+  let result = await Product.updateOne(
+    {
+      _id: req.params.id,
+    },
+    {
+      $set: req.body,
+    }
+  );
+  res.send(result);
+});
+
+app.get("/search/:key", async (req, res) => {
+  let result = await Product.find({
+    $or: [
+      {
+        name: { $regex: req.params.key },
+      },
+      {
+        category: { $regex: req.params.key },
+      },
+      {
+        company: { $regex: req.params.key },
+      },
+    ],
+  });
+  res.send(result);
 });
 
 mongoose

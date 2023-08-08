@@ -1,36 +1,49 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-
-const AddProduct = () => {
+const UpdateProduct = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [company, setCompany] = useState("");
-  const [error, setError] = useState(false);
-  const navigate = useNavigate()
 
-  const handleAddProduct = async (e) => {
+  const params = useParams();
+  const navigate = useNavigate();
+
+  const getProductDEtails = async () => {
+    let result = await fetch(`http://localhost:5000/update/${params.id}`);
+    result = await result.json();
+    setName(result.name);
+    setPrice(result.price);
+    setCategory(result.category);
+    setCompany(result.company);
+  };
+
+  useEffect(() => {
+    getProductDEtails();
+  }, []);
+
+  const handleUpdateProduct = async (e) => {
     e.preventDefault();
-    if (!name && !price && !category && !company) {
-      setError(true);
-    }
-    const userId = JSON.parse(localStorage.getItem("user"))._id;
-    let result = await fetch("http://localhost:5000/add-product", {
-      method: "post",
-      body: JSON.stringify({ name, price, category, company, userId }),
+
+    let result = await fetch(`http://localhost:5000/update/${params.id}`, {
+      method: "put",
+      body: JSON.stringify({ name, price, category, company }),
       headers: {
-        "Content-type": "application/json",
+        "content-type": "application/json",
       },
     });
     result = await result.json();
-    navigate('/')
+    if (result) {
+      navigate("/");
+    }
   };
-
   return (
     <div className="mt-5">
       <div className="d-flex justify-content-center mb-3">
-        <h1>Add Product</h1>
+        <h1>Update Product</h1>
       </div>
       <div className="form">
         <form className="">
@@ -47,9 +60,6 @@ const AddProduct = () => {
                 setName(e.target.value);
               }}
             />
-            {error && !name && (
-              <span className="text-danger d-block ">Enter a valid name</span>
-            )}
           </div>
 
           <div className="mb-3">
@@ -65,9 +75,6 @@ const AddProduct = () => {
                 setPrice(e.target.value);
               }}
             />
-            {error && !price && (
-              <span className="text-danger d-block ">Enter a valid price</span>
-            )}
           </div>
 
           <div className="mb-3">
@@ -83,11 +90,6 @@ const AddProduct = () => {
                 setCategory(e.target.value);
               }}
             />
-            {error && !category && (
-              <span className="text-danger d-block ">
-                Enter a valid category
-              </span>
-            )}
           </div>
 
           <div className="mb-3">
@@ -103,20 +105,15 @@ const AddProduct = () => {
                 setCompany(e.target.value);
               }}
             />
-            {error && !company && (
-              <span className="text-danger d-block ">
-                Enter a valid company
-              </span>
-            )}
           </div>
 
           <div className="d-flex justify-content-center">
             <button
-              onClick={handleAddProduct}
+              onClick={handleUpdateProduct}
               type="submit"
               className="btn btn-primary w-50 "
             >
-              Submit
+              Update
             </button>
           </div>
         </form>
@@ -125,4 +122,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default UpdateProduct;
