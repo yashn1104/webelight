@@ -2,8 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const User = require("./schema/User.js");
 const Product = require("./schema/Product.js");
+const jwt = require("jsonwebtoken");
 
 const cors = require("cors");
+const secretKey = "secretkey";
 
 require("dotenv").config();
 
@@ -17,14 +19,19 @@ app.post("/register", async (req, res) => {
   let result = await user.save();
   result = result.toObject();
   delete result.pwd;
-  res.send(result);
+  jwt.sign({ result }, secretKey, { expiresIn: "2h" }, (err, token) => {
+    res.send({ result, auth: token });
+  });
 });
 
 app.post("/login", async (req, res) => {
   if (req.body.pwd && req.body.email) {
     let user = await User.findOne(req.body).select("-pwd");
     if (user) {
-      res.send(user);
+      // res.send(user);
+      jwt.sign({ user }, secretKey, { expiresIn: "2h" }, (err, token) => {
+        res.send({ user, auth: token });
+      });
     } else {
       res.send("User No Found");
     }
@@ -33,13 +40,13 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/add-product", async (req, res) => {
+app.post("/add-product", verifyToken, async (req, res) => {
   let product = new Product(req.body);
   let result = await product.save();
   res.send(result);
 });
 
-app.get("/product", async (req, res) => {
+app.get("/product", verifyToken, async (req, res) => {
   let products = await Product.find();
   if (products.length > 0) {
     res.send(products);
@@ -48,12 +55,12 @@ app.get("/product", async (req, res) => {
   }
 });
 
-app.delete("/delete/:id", async (req, res) => {
+app.delete("/delete/:id", verifyToken, async (req, res) => {
   let result = await Product.deleteOne({ _id: req.params.id });
   res.send(result);
 });
 
-app.get("/update/:id", async (req, res) => {
+app.get("/update/:id", verifyToken, async (req, res) => {
   let result = await Product.findOne({ _id: req.params.id });
   if (result) {
     res.send(result);
@@ -62,7 +69,7 @@ app.get("/update/:id", async (req, res) => {
   }
 });
 
-app.put("/update/:id", async (req, res) => {
+app.put("/update/:id", verifyToken, async (req, res) => {
   let result = await Product.updateOne(
     {
       _id: req.params.id,
@@ -74,7 +81,7 @@ app.put("/update/:id", async (req, res) => {
   res.send(result);
 });
 
-app.get("/search/:key", async (req, res) => {
+app.get("/search/:key", verifyToken, async (req, res) => {
   let result = await Product.find({
     $or: [
       {
@@ -90,6 +97,27 @@ app.get("/search/:key", async (req, res) => {
   });
   res.send(result);
 });
+
+// const verifyToken = (req,res,next)=>{
+//   console.log("middleware called");
+//   next();
+// }
+
+function verifyToken(req, res, next) {
+  let token = req.headers["authorization"];
+  if (token) {
+    token = token.split(" ")[1];
+    jwt.verify(token, secretKey, (err, valid) => {
+      if (err) {
+        res.status(401).send({ result: "please add valid token" });
+      } else {
+        next();
+      }
+    });
+  } else {
+    res.status(403).send({ result: "please add token with header" });
+  }
+}
 
 mongoose
   .connect(process.env.MONGODB_URL)

@@ -6,6 +6,12 @@ const Login = () => {
   const [pwd, setpwd] = React.useState("");
 
   const navigate = useNavigate();
+  React.useEffect(() => {
+    const auth = localStorage.getItem("user");
+    if (auth) {
+      navigate("/");
+    }
+  }, []);
 
   const handleLogin = async () => {
     console.log(email, pwd);
@@ -19,20 +25,14 @@ const Login = () => {
     });
     result = await result.json();
     console.log(result);
-    if (result.name) {
-      localStorage.setItem("user", JSON.stringify(result));
+    if (result.auth) {
+      localStorage.setItem("user", JSON.stringify(result.user));
+      localStorage.setItem("token", JSON.stringify(result.auth));
       navigate("/");
     } else {
-      alert("Please Enyter a Correct result");
+      alert("Please Enter a Correct result");
     }
   };
-
-  React.useEffect(() => {
-    const auth = localStorage.getItem("user");
-    if (auth) {
-      navigate("/");
-    }
-  });
 
   return (
     <div>

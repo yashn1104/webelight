@@ -23,12 +23,12 @@ const Navbar = () => {
           <li>
             <Link to="/add">Add Product</Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="/update/:id">Update Product</Link>
-          </li>
-          <li>
+          </li> */}
+          {/* <li>
             <Link to="/profile">Profile</Link>
-          </li>
+          </li> */}
           <li>
             <Link onClick={logout} to="/signup">
               Logout ({JSON.parse(auth).name})

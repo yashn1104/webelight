@@ -4,7 +4,11 @@ const ProductList = () => {
   const [product, setProduct] = useState([]);
 
   const getProducts = async () => {
-    let result = await fetch("http://localhost:5000/product");
+    let result = await fetch("http://localhost:5000/product", {
+      headers: {
+        authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
+    });
     result = await result.json();
     setProduct(result);
   };
@@ -16,6 +20,9 @@ const ProductList = () => {
   const deleteProduct = async (id) => {
     let result = await fetch(`http://localhost:5000/delete/${id}`, {
       method: "delete",
+      headers: {
+        authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
+      },
     });
     result = await result.json();
     if (result) {
@@ -26,7 +33,11 @@ const ProductList = () => {
   const searchHandle = async (e) => {
     let key = e.target.value;
     if (key) {
-      let result = await fetch(`http://localhost:5000/search/${key}`);
+      let result = await fetch(`http://localhost:5000/search/${key}`, {
+        headers: {
+          authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+      });
       result = await result.json();
       if (result) {
         setProduct(result);
@@ -53,6 +64,8 @@ const ProductList = () => {
             <th>Product Name</th>
             <th>Price</th>
             <th>Company</th>
+            <th>Category</th>
+
             <th>Actions</th>
           </tr>
         </thead>
@@ -65,6 +78,7 @@ const ProductList = () => {
                   <td>{data.name}</td>
                   <td>{data.price}</td>
                   <td>{data.company}</td>
+                  <td>{data.category}</td>
                   <td className="">
                     <Link to={`/update/${data._id}`}>
                       <button
