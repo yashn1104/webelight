@@ -1,26 +1,28 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Login = () => {
   const [email, setEmail] = React.useState("");
   const [pwd, setpwd] = React.useState("");
 
   const navigate = useNavigate();
-  React.useEffect(() => {
+  useEffect(() => {
     const auth = localStorage.getItem("user");
     if (auth) {
       navigate("/");
     }
   }, []);
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     console.log(email, pwd);
 
     let result = await fetch("http://localhost:5000/login", {
       method: "post",
       body: JSON.stringify({ email, pwd }),
       headers: {
-        "content-type": "application/json",
+        "Content-type": "application/json; charset=UTF-8",
       },
     });
     result = await result.json();

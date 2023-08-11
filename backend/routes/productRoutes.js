@@ -1,32 +1,16 @@
-const jwt = require("jsonwebtoken");
-const secretKey = "secretkey";
-
 const { Router } = require("express");
+const { addProducut } = require("../services/productServices/add-product");
+const { getProduct } = require("../services/productServices/get-product");
+const { deleteProduct } = require("../services/productServices/delete-product");
 const {
-  addProducut,
-  getProduct,
-  deleteProduct,
   getUpdateProduct,
-  updateProduct,
-  searchProduct,
-} = require("../Controllers/productController");
-const router = Router();
+} = require("../services/productServices/getupdate-product");
+const { updateProduct } = require("../services/productServices/update-product");
+const { searchProduct } = require("../services/productServices/search-product");
 
-function verifyToken(req, res, next) {
-  let token = req.headers["authorization"];
-  if (token) {
-    token = token.split(" ")[1];
-    jwt.verify(token, secretKey, (err, valid) => {
-      if (err) {
-        res.status(401).send({ result: "please add valid token" });
-      } else {
-        next();
-      }
-    });
-  } else {
-    res.status(403).send({ result: "please add token with header" });
-  }
-}
+const { verifyToken } = require("../middleware/jwtVerify.js");
+
+const router = Router();
 
 router.post("/add-product", verifyToken, addProducut);
 router.get("/product", verifyToken, getProduct);

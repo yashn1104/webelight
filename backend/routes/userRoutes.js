@@ -1,7 +1,9 @@
 const { Router } = require("express");
 const { body } = require("express-validator");
 
-const { registerUser, loginUser } = require("../Controllers/userController");
+// const { registerUser, loginUser } = require("../Controllers/userController");
+const { register } = require("../services/userServices/register");
+const { login } = require("../services/userServices/login");
 
 const router = Router();
 
@@ -14,13 +16,17 @@ router.post(
       .isLength({ min: 3 })
       .isLength({ max: 8 }),
   ],
-  registerUser
+  register
 );
-router.post("/login",[
+router.post(
+  "/login",
+  [
     body("email", "Enter a valid Email").isEmail(),
     body("pwd", "Enter a valid password")
       .isLength({ min: 3 })
       .isLength({ max: 8 }),
-  ], loginUser);
+  ],
+  login
+);
 
 module.exports = router;

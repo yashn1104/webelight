@@ -11,8 +11,9 @@ const AddProduct = () => {
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
-    if (!name && !price && !category && !company) {
+    if (!name || !price || !category || !company) {
       setError(true);
+      return false ;
     }
     const userId = JSON.parse(localStorage.getItem("user"))._id;
     let result = await fetch("http://localhost:5000/add-product", {
