@@ -4,21 +4,29 @@ const secretKey = "secretkey";
 const { validationResult } = require("express-validator");
 
 module.exports.login = async (req, res) => {
-  // const errors = validationResult(req);
-  // if (!errors.isEmpty()) {
-  //   res.status(400).json(errors);
-  // }
-  // res.send(req.body);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json(errors);
+  }
+
   if (req.body.pwd && req.body.email) {
-    let user = await User.findOne(req.body).select("-pwd");
-    if (user) {
-      jwt.sign({ user }, secretKey, { expiresIn: "2h" }, (err, token) => {
-        res.send({ user, auth: token });
-      });
-    } else {
-      res.send("User No Found");
+    try {
+      let user = await User.findOne(req.body).select("-pwd");
+      if (user) {
+        jwt.sign({ user }, secretKey, { expiresIn: "2h" }, (err, token) => {
+          if (err) {
+            return res.status(500).json({ error: "Internal Server Error" });
+          }
+          res.send({ user, auth: token });
+        });
+      } else {
+        res.status(404).send("User Not Found");
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   } else {
-    res.send("User No Found");
+    res.status(400).send("Email and Password are required");
   }
 };

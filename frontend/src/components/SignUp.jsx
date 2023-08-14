@@ -9,111 +9,35 @@ const SignUp = () => {
 
   const navigate = useNavigate();
 
-  // const validateForm = () => {
-  //   if (name.length == 0) {
-  //     alert("Invalid Form, First Name can not be empty");
-  //     return;
-  //   }
-
-  //   if (email.length == 0) {
-  //     alert("Invalid Form, Email Address can not be empty");
-  //     return;
-  //   }
-  //   if (pwd.length < 8) {
-  //     alert(
-  //       "Invalid Form, Password must contain greater than or equal to 8 characters."
-  //     );
-  //     return;
-  //   }
-
-  //   let countUpperCase = 0;
-  //   let countLowerCase = 0;
-  //   let countDigit = 0;
-  //   let countSpecialCharacters = 0;
-
-  //   for (let i = 0; i < pwd.length; i++) {
-  //     const specialChars = [
-  //       "!",
-  //       "@",
-  //       "#",
-  //       "$",
-  //       "%",
-  //       "^",
-  //       "&",
-  //       "*",
-  //       "(",
-  //       ")",
-  //       "_",
-  //       "-",
-  //       "+",
-  //       "=",
-  //       "[",
-  //       "{",
-  //       "]",
-  //       "}",
-  //       ":",
-  //       ";",
-  //       "<",
-  //       ">",
-  //     ];
-
-  //     if (specialChars.includes(pwd[i])) {
-  //       countSpecialCharacters++;
-  //     } else if (!isNaN(pwd[i] * 1)) {
-  //       countDigit++;
-  //     } else {
-  //       if (pwd[i] == pwd[i].toUpperCase()) {
-  //         countUpperCase++;
-  //       }
-  //       if (pwd[i] == pwd[i].toLowerCase()) {
-  //         countLowerCase++;
-  //       }
-  //     }
-  //   }
-
-  //   if (countLowerCase == 0) {
-  //     alert("Invalid Form, 0 lower case characters in password");
-  //     return;
-  //   }
-
-  //   if (countUpperCase == 0) {
-  //     alert("Invalid Form, 0 upper case characters in password");
-  //     return;
-  //   }
-
-  //   if (countDigit == 0) {
-  //     alert("Invalid Form, 0 digit characters in password");
-  //     return;
-  //   }
-
-  //   if (countSpecialCharacters == 0) {
-  //     alert("Invalid Form, 0 special characters in password");
-  //     return;
-  //   }
-
-  //   alert("Form is valid");
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !email || !pwd) {
       setError(true);
-      return false;
+      return;
     }
-    
-    let result = await fetch("http://localhost:5000/register", {
-      method: "post",
-      body: JSON.stringify({ name, email, pwd }),
-      headers: {
-        "content-type": "application/json",
-      },
-    });
-    result = await result.json();
-    console.log(result);
-    localStorage.setItem("user", JSON.stringify(result.result));
-    localStorage.setItem("token", JSON.stringify(result.auth));
 
-    navigate("/");
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "post",
+        body: JSON.stringify({ name, email, pwd }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json()
+      console.log(result);
+
+      if (result.auth) {
+        localStorage.setItem("user", JSON.stringify(result.result));
+        localStorage.setItem("token", JSON.stringify(result.auth));
+        navigate("/");
+      } else {
+        alert("Registration Failed");
+      }
+    } catch (error) {
+      console.error("Registration Error:", error);
+    }
   };
 
   useEffect(() => {
@@ -121,7 +45,7 @@ const SignUp = () => {
     if (auth) {
       navigate("/");
     }
-  });
+  }, [navigate]);
 
   return (
     <div className="">
@@ -143,7 +67,7 @@ const SignUp = () => {
                 onChange={(e) => setName(e.target.value)}
               />
               {error && !name && (
-                <span className="text-danger d-block ">Enter a valid name</span>
+                <span className="text-danger d-block">Enter a valid name</span>
               )}
             </div>
           </div>
@@ -189,7 +113,7 @@ const SignUp = () => {
             <button
               onClick={handleSubmit}
               type="submit"
-              className="btn btn-primary w-25 "
+              className="btn btn-primary w-25"
             >
               Submit
             </button>

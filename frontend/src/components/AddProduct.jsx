@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const AddProduct = () => {
@@ -9,11 +10,13 @@ const AddProduct = () => {
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
+  const dispatch = useDispatch()
+
   const handleAddProduct = async (e) => {
     e.preventDefault();
     if (!name || !price || !category || !company) {
       setError(true);
-      return false ;
+      return false;
     }
     const userId = JSON.parse(localStorage.getItem("user"))._id;
     let result = await fetch("http://localhost:5000/add-product", {
