@@ -1,35 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-const ProductList = () => {
-  const [product, setProduct] = useState([]);
+import { useDispatch } from "react-redux";
+import { getProduct, deleteProduct } from "../redux/Slices/productSlice";
 
-  const getProducts = async () => {
-    let result = await fetch("http://localhost:5000/product", {
-      headers: {
-        authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
-      },
-    });
-    result = await result.json();
-    setProduct(result);
-  };
+const ProductList = () => {
+  const dispatch = useDispatch();
+  const { products, loading } = useSelector((state) => state.products);
 
   useEffect(() => {
-    getProducts();
-  }, []);
+    dispatch(getProduct());
+  }, [dispatch]);
 
-  const deleteProduct = async (id) => {
-    let result = await fetch(`http://localhost:5000/delete/${id}`, {
-      method: "delete",
-      headers: {
-        authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
-      },
-    });
-    result = await result.json();
-    if (result) {
-      getProducts();
-      alert("Product Deleted Successfully");
-    }
-  };
   const searchHandle = async (e) => {
     let key = e.target.value;
     if (key) {
@@ -40,12 +22,15 @@ const ProductList = () => {
       });
       result = await result.json();
       if (result) {
-        setProduct(result);
       }
     } else {
-      getProducts();
+      // getProducts();
     }
   };
+
+  if (loading) {
+    return <h2>Loading</h2>;
+  }
 
   return (
     <div className="container">
@@ -70,8 +55,8 @@ const ProductList = () => {
           </tr>
         </thead>
         <tbody>
-          {product.length > 0 ? (
-            product.map((data, index) => {
+          {products?.length > 0 ? (
+            products?.map((data, index) => {
               return (
                 <tr key={data._id}>
                   <td>{index + 1}</td>
@@ -90,7 +75,7 @@ const ProductList = () => {
                     </Link>
 
                     <button
-                      onClick={() => deleteProduct(data._id)}
+                      onClick={() => dispatch(deleteProduct(data._id))}
                       className="bg-danger text-light"
                       type="submit"
                     >

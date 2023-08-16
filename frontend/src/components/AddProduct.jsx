@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { addProduct } from "../redux/Slices/productSlice";
 
 const AddProduct = () => {
   const [name, setName] = useState("");
@@ -10,7 +11,7 @@ const AddProduct = () => {
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
@@ -18,16 +19,17 @@ const AddProduct = () => {
       setError(true);
       return false;
     }
-    const userId = JSON.parse(localStorage.getItem("user"))._id;
-    let result = await fetch("http://localhost:5000/add-product", {
-      method: "post",
-      body: JSON.stringify({ name, price, category, company, userId }),
-      headers: {
-        "Content-type": "application/json",
-        authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
-      },
-    });
-    result = await result.json();
+    // const userId = JSON.parse(localStorage.getItem("user"))._id;
+    // let result = await fetch("http://localhost:5000/add-product", {
+    //   method: "post",
+    //   body: JSON.stringify({ name, price, category, company, userId }),
+    //   headers: {
+    //     "Content-type": "application/json",
+    //     authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
+    //   },
+    // });
+    // result = await result.json();
+    dispatch(addProduct({name,price,category,company}))
     navigate("/");
   };
 
