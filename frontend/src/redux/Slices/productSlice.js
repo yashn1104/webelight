@@ -1,7 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { useParams } from "react-router-dom";
-
-
 
 export const addProduct = createAsyncThunk(
   "addProduct",
@@ -19,11 +16,11 @@ export const addProduct = createAsyncThunk(
 
       if (!response.ok) {
         const errorData = await response.json();
-        return rejectWithValue(errorData); // This will trigger the rejected action
+        return rejectWithValue(errorData);
       }
 
       const result = await response.json();
-      return result; // This will trigger the fulfilled action
+      return result;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -69,10 +66,10 @@ export const deleteProduct = createAsyncThunk(
 
 export const updateProduct = createAsyncThunk(
   "updateProduct",
-  async ({ name, price, category, company , id}, { rejectWithValue }) => {
-    let response = await fetch(`http://localhost:5000/update/${id}`, {
+  async (data, { rejectWithValue }) => {
+    let response = await fetch(`http://localhost:5000/update/${data._id}`, {
       method: "put",
-      body: JSON.stringify({ name, price, category, company }),
+      body: JSON.stringify(data),
       headers: {
         "content-type": "application/json",
         authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
@@ -83,6 +80,24 @@ export const updateProduct = createAsyncThunk(
       return result;
     } catch (error) {
       return rejectWithValue(error);
+    }
+  }
+);
+
+
+export const searchProduct = createAsyncThunk(
+  "product/search", // Action type prefix
+  async (key, thunkAPI) => {
+    try {
+      const result = await fetch(`http://localhost:5000/search/${key}`, {
+        headers: {
+          authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+      });
+      const data = await result.json();
+      return data; // Return the fetched data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
@@ -113,7 +128,7 @@ export const productSlice = createSlice({
       })
       .addCase(addProduct.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.message; // Assuming the error message is available in the payload
+        state.error = action.payload.message;
       })
       .addCase(getProduct.pending, (state) => {
         state.loading = true;
@@ -145,14 +160,26 @@ export const productSlice = createSlice({
       })
       .addCase(updateProduct.fulfilled, (state, action) => {
         state.loading = false;
-      state.products = state.products.map((ele) =>
-        ele.id === action.payload.id ? action.payload : ele
-      );
+        state.products = state.products.map((ele) =>
+          ele._id === action.payload._id ? action.payload : ele
+        );
       })
       .addCase(updateProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.message;
       })
+      .addCase(searchProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(searchProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = action.payload; // Update products with fetched data
+      })
+      .addCase(searchProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
   },
 });
 

@@ -18,7 +18,6 @@ router.post(
   "/add-product",
   [
     body("name", "name is already taken in database")
-      .isAlpha()
       .notEmpty()
       .withMessage(
         "The name should contain only letters and should be unique."

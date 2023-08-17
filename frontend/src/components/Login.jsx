@@ -1,47 +1,62 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../redux/Slices/userSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
 
   const navigate = useNavigate();
-  
+  const dispatch = useDispatch();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    console.log(email, pwd);
+
+    // try {
+    //   const response = await fetch("http://localhost:5000/login", {
+    //     method: "post",
+    //     body: JSON.stringify({ email, pwd }),
+    //     headers: {
+    //       "Content-type": "application/json; charset=UTF-8",
+    //     },
+    //   });
+
+    //   const result = await response.json();
+    //   console.log(result);
+
+    //   if (result.auth) {
+    //     localStorage.setItem("user", JSON.stringify(result.user));
+    //     localStorage.setItem("token", JSON.stringify(result.auth));
+    //     navigate("/");
+    //   } else {
+    //     alert("Please Enter Correct Credentials");
+    //   }
+    // } catch (error) {
+    //   console.error("Login Error:", error);
+    // }
+
+    dispatch(loginUser({ email, pwd }))
+    .then((response) => {
+      if (response.payload.auth) {
+        localStorage.setItem("user", JSON.stringify(response.payload.user));
+        localStorage.setItem("token", JSON.stringify(response.payload.auth));
+        navigate("/");
+      } else {
+        alert("Please Enter Correct Credentials");
+      }
+    })
+    .catch((error) => {
+      console.error("Login Error:", error);
+    });
+  };
   useEffect(() => {
     const auth = localStorage.getItem("user");
     if (auth) {
       navigate("/");
     }
   }, [navigate]);
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    console.log(email, pwd);
-
-    try {
-      const response = await fetch("http://localhost:5000/login", {
-        method: "post",
-        body: JSON.stringify({ email, pwd }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      });
-
-      const result = await response.json();
-      console.log(result);
-
-      if (result.auth) {
-        localStorage.setItem("user", JSON.stringify(result.user));
-        localStorage.setItem("token", JSON.stringify(result.auth));
-        navigate("/");
-      } else {
-        alert("Please Enter Correct Credentials");
-      }
-    } catch (error) {
-      console.error("Login Error:", error);
-    }
-  };
-
   return (
     <div>
       <div className="d-flex justify-content-center mb-3">

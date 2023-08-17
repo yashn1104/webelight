@@ -29,7 +29,7 @@ const AddProduct = () => {
     //   },
     // });
     // result = await result.json();
-    dispatch(addProduct({name,price,category,company}))
+    dispatch(addProduct({ name, price, category, company }));
     navigate("/");
   };
 

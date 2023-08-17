@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../redux/Slices/userSlice";
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -8,6 +10,7 @@ const SignUp = () => {
   const [error, setError] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,34 +19,37 @@ const SignUp = () => {
       return;
     }
 
-    try {
-      const response = await fetch("http://localhost:5000/register", {
-        method: "post",
-        body: JSON.stringify({ name, email, pwd }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    // try {
+    //   const response = await fetch("http://localhost:5000/register", {
+    //     method: "post",
+    //     body: JSON.stringify({ name, email, pwd }),
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   });
 
-      const result = await response.json()
-      console.log(result);
+    //   const result = await response.json()
+    //   console.log(result);
 
-      if (result.auth) {
-        localStorage.setItem("user", JSON.stringify(result.result));
-        localStorage.setItem("token", JSON.stringify(result.auth));
-        navigate("/");
-      } else {
-        alert("Registration Failed");
-      }
-    } catch (error) {
-      console.error("Registration Error:", error);
-    }
+    //   if (result.auth) {
+    //     localStorage.setItem("user", JSON.stringify(result.result));
+    //     localStorage.setItem("token", JSON.stringify(result.auth));
+    //     navigate("/");
+    //   } else {
+    //     alert("Registration Failed");
+    //   }
+    // } catch (error) {
+    //   console.error("Registration Error:", error);
+    // }
+
+    dispatch(addUser({ name, email, pwd }));
+    navigate("/login");
   };
 
   useEffect(() => {
     const auth = localStorage.getItem("user");
     if (auth) {
-      navigate("/");
+      navigate("/login");
     }
   }, [navigate]);
 

@@ -2,48 +2,68 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProduct } from "../redux/Slices/productSlice";
 
 const UpdateProduct = () => {
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [company, setCompany] = useState("");
+  // const [name, setName] = useState("");
+  // const [price, setPrice] = useState("");
+  // const [category, setCategory] = useState("");
+  // const [company, setCompany] = useState("");
+  const [updateData, setUpdateData] = useState();
+  const { products, loading } = useSelector((state) => state.products);
+  const { id } = useParams();
 
   const params = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const getProductDEtails = async () => {
-    let result = await fetch(`http://localhost:5000/update/${params.id}`, {
-      headers: {
-        authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
-      },
-    });
-    result = await result.json();
-    setName(result.name);
-    setPrice(result.price);
-    setCategory(result.category);
-    setCompany(result.company);
-  };
+  // const getProductDEtails = async () => {
+  //   let result = await fetch(`http://localhost:5000/update/${params.id}`, {
+  //     headers: {
+  //       authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
+  //     },
+  //   });
+  //   result = await result.json();
+  //   setName(result.name);
+  //   setPrice(result.price);
+  //   setCategory(result.category);
+  //   setCompany(result.company);
+  // };
+
+  // useEffect(() => {
+  //   getProductDEtails();
+  // }, []);
 
   useEffect(() => {
-    getProductDEtails();
+    if (id) {
+      const singleUser = products.filter((ele) => ele._id === id);
+      setUpdateData(singleUser[0]);
+    }
   }, []);
+  const newData = (e) => {
+    setUpdateData({ ...updateData, [e.target.name]: e.target.value });
+  };
+
+  console.log("updated data", updateData);
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
 
-    let result = await fetch(`http://localhost:5000/update/${params.id}`, {
-      method: "put",
-      body: JSON.stringify({ name, price, category, company }),
-      headers: {
-        "content-type": "application/json",
-        authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
-      },
-    });
-    result = await result.json();
-    if (result) {
-      navigate("/");
-    }
+    // let result = await fetch(`http://localhost:5000/update/${params.id}`, {
+    //   method: "put",
+    //   body: JSON.stringify({ name, price, category, company }),
+    //   headers: {
+    //     "content-type": "application/json",
+    //     authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
+    //   },
+    // });
+    // result = await result.json();
+    // if (result) {
+    //   navigate("/");
+    // }
+    dispatch(updateProduct(updateData));
+    navigate("/");
   };
   return (
     <div className="mt-5">
@@ -59,11 +79,10 @@ const UpdateProduct = () => {
             <input
               type="text"
               className="form-control"
-              value={name}
+              value={updateData && updateData.name}
               id="exampleInputName"
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
+              onChange={newData}
+              name="name"
             />
           </div>
 
@@ -74,11 +93,10 @@ const UpdateProduct = () => {
             <input
               type="text"
               className="form-control"
-              value={price}
+              value={updateData && updateData.price}
               id="exampleInputPrice"
-              onChange={(e) => {
-                setPrice(e.target.value);
-              }}
+              onChange={newData}
+              name="price"
             />
           </div>
 
@@ -89,11 +107,10 @@ const UpdateProduct = () => {
             <input
               type="text"
               className="form-control"
-              value={category}
+              value={updateData && updateData.category}
               id="exampleInputCategory"
-              onChange={(e) => {
-                setCategory(e.target.value);
-              }}
+              onChange={newData}
+              name="category"
             />
           </div>
 
@@ -104,11 +121,10 @@ const UpdateProduct = () => {
             <input
               type="text"
               className="form-control"
-              value={company}
+              value={updateData && updateData.company}
               id="exampleInputCompany"
-              onChange={(e) => {
-                setCompany(e.target.value);
-              }}
+              onChange={newData}
+              name="company"
             />
           </div>
 

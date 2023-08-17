@@ -1,10 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { getProduct, deleteProduct } from "../redux/Slices/productSlice";
-
+import {
+  getProduct,
+  deleteProduct,
+  searchProduct,
+} from "../redux/Slices/productSlice";
+import ProductTable from "./ProductTable";
+import ProductTableHeader from "./ProductTableHeader";
 const ProductList = () => {
+  const [searchKey, setSearchKey] = useState("");
+
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.products);
 
@@ -13,18 +20,48 @@ const ProductList = () => {
   }, [dispatch]);
 
   const searchHandle = async (e) => {
-    let key = e.target.value;
-    if (key) {
-      let result = await fetch(`http://localhost:5000/search/${key}`, {
-        headers: {
-          authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
-        },
-      });
-      result = await result.json();
-      if (result) {
-      }
-    } else {
-      // getProducts();
+    // const key = e.target.value;
+    // setSearchKey(key);
+
+    // if (key) {
+
+    //   const result = await fetch(`http://localhost:5000/search/${key}`, {
+    //     headers: {
+    //       authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
+    //     },
+    //   });
+    //   const resultData = await result.json();
+    //   if (resultData) {
+    //     setSearchKey(resultData);
+    //   }
+    // } else {
+    //   dispatch(getProduct());
+    // }
+    const key = e.target.value;
+    setSearchKey(key);
+
+    dispatch(searchProduct(key));
+  };
+
+  // useEffect(() => {
+  //   const debounceTimeout = setTimeout(() => {
+  //     if (searchKey !== "") {
+  //       dispatch(searchProduct(searchKey));
+  //     } else {
+  //       dispatch(getProduct());
+  //     }
+  //   }, 1000); 
+  //   return () => {
+  //     clearTimeout(debounceTimeout);
+  //   };
+  // }, [searchKey, dispatch]);
+  
+
+
+  const handleDelete = async (productId) => {
+    const response = await dispatch(deleteProduct(productId));
+    if (response.meta.requestStatus === "fulfilled") {
+      dispatch(getProduct());
     }
   };
 
@@ -40,10 +77,11 @@ const ProductList = () => {
           className="p-2 w-100 h-100 border"
           placeholder="Search Product"
           onChange={searchHandle}
+          value={searchKey}
         />
       </div>
       <table className="table m-auto table-bordered text-center mt-4 h-25 w-75">
-        <thead className="table-dark">
+        {/* <thead className="table-dark">
           <tr>
             <th>Sr. No.</th>
             <th>Product Name</th>
@@ -53,8 +91,8 @@ const ProductList = () => {
 
             <th>Actions</th>
           </tr>
-        </thead>
-        <tbody>
+        </thead> */}
+        {/* <tbody>
           {products?.length > 0 ? (
             products?.map((data, index) => {
               return (
@@ -75,7 +113,7 @@ const ProductList = () => {
                     </Link>
 
                     <button
-                      onClick={() => dispatch(deleteProduct(data._id))}
+                      onClick={() => handleDelete(data._id)}
                       className="bg-danger text-light"
                       type="submit"
                     >
@@ -88,7 +126,11 @@ const ProductList = () => {
           ) : (
             <h1>Result Not found !</h1>
           )}
-        </tbody>
+        </tbody> */}
+        <ProductTableHeader />
+         <ProductTable products={products} handleDelete={handleDelete} />
+
+
       </table>
     </div>
   );
