@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { updateProduct } from "../redux/Slices/productSlice";
+import { updateProduct } from "../redux/Actions/productActions";
 
 const UpdateProduct = () => {
   // const [name, setName] = useState("");

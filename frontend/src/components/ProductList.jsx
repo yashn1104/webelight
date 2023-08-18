@@ -6,7 +6,7 @@ import {
   getProduct,
   deleteProduct,
   searchProduct,
-} from "../redux/Slices/productSlice";
+} from "../redux/Actions/productActions";
 import ProductTable from "./ProductTable";
 import ProductTableHeader from "./ProductTableHeader";
 const ProductList = () => {
@@ -37,7 +37,7 @@ const ProductList = () => {
     // } else {
     //   dispatch(getProduct());
     // }
-    const key = e.target.value;
+    const key = e.target.value; 
     setSearchKey(key);
 
     dispatch(searchProduct(key));

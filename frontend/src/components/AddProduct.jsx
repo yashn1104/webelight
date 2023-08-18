@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { addProduct } from "../redux/Slices/productSlice";
+import { addProduct } from "../redux/Actions/productActions";
 
 const AddProduct = () => {
   const [name, setName] = useState("");
