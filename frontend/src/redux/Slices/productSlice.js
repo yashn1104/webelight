@@ -85,7 +85,7 @@ export const updateProduct = createAsyncThunk(
 );
 
 export const searchProduct = createAsyncThunk(
-  "product/search", // Action type prefix
+  "product/search", 
   async (key, thunkAPI) => {
     try {
       const result = await fetch(`http://localhost:5000/search/${key}`, {
@@ -94,7 +94,7 @@ export const searchProduct = createAsyncThunk(
         },
       });
       const data = await result.json();
-      return data; // Return the fetched data
+      return data; 
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
