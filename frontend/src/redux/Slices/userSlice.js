@@ -46,12 +46,12 @@ export const loginUser = createAsyncThunk(
       if (result.auth) {
         localStorage.setItem("user", JSON.stringify(result.user));
         localStorage.setItem("token", JSON.stringify(result.auth));
-        return result; 
+        return result;
       } else {
         throw new Error("Login Failed");
       }
     } catch (error) {
-      return rejectWithValue(error.message); 
+      return rejectWithValue(error.message);
     }
   }
 );

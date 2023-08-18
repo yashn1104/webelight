@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -42,21 +42,6 @@ const ProductList = () => {
 
     dispatch(searchProduct(key));
   };
-
-  // useEffect(() => {
-  //   const debounceTimeout = setTimeout(() => {
-  //     if (searchKey !== "") {
-  //       dispatch(searchProduct(searchKey));
-  //     } else {
-  //       dispatch(getProduct());
-  //     }
-  //   }, 1000); 
-  //   return () => {
-  //     clearTimeout(debounceTimeout);
-  //   };
-  // }, [searchKey, dispatch]);
-  
-
 
   const handleDelete = async (productId) => {
     const response = await dispatch(deleteProduct(productId));
@@ -128,9 +113,7 @@ const ProductList = () => {
           )}
         </tbody> */}
         <ProductTableHeader />
-         <ProductTable products={products} handleDelete={handleDelete} />
-
-
+        <ProductTable products={products} handleDelete={handleDelete} />
       </table>
     </div>
   );

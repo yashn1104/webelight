@@ -84,7 +84,6 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
-
 export const searchProduct = createAsyncThunk(
   "product/search", // Action type prefix
   async (key, thunkAPI) => {
@@ -108,14 +107,8 @@ export const productSlice = createSlice({
     products: [],
     loading: false,
     error: null,
-    // searchData: [],
   },
-  //   reducers: {
-  //     searchUser: (state, action) => {
-  //       console.log(action.payload);
-  //       state.searchData = action.payload;
-  //     },
-  //   },
+
   extraReducers: (builder) => {
     builder
       .addCase(addProduct.pending, (state) => {
@@ -174,7 +167,7 @@ export const productSlice = createSlice({
       })
       .addCase(searchProduct.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload; 
+        state.products = action.payload;
       })
       .addCase(searchProduct.rejected, (state, action) => {
         state.loading = false;
@@ -184,4 +177,3 @@ export const productSlice = createSlice({
 });
 
 export default productSlice.reducer;
-export const { searchUser } = productSlice.actions;
