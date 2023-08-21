@@ -14,34 +14,53 @@ const ProductList = () => {
 
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.products);
-
+  const inputRef = useRef(null);
   useEffect(() => {
     dispatch(getProduct());
   }, [dispatch]);
 
-  const searchHandle = async (e) => {
-    // const key = e.target.value;
-    // setSearchKey(key);
+  // const searchHandle = async (e) => {
+  //   // const key = e.target.value;
+  //   // setSearchKey(key);
 
-    // if (key) {
+  //   // if (key) {
 
-    //   const result = await fetch(`http://localhost:5000/search/${key}`, {
-    //     headers: {
-    //       authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
-    //     },
-    //   });
-    //   const resultData = await result.json();
-    //   if (resultData) {
-    //     setSearchKey(resultData);
-    //   }
-    // } else {
-    //   dispatch(getProduct());
-    // }
-    const key = e.target.value; 
-    setSearchKey(key);
+  //   //   const result = await fetch(`http://localhost:5000/search/${key}`, {
+  //   //     headers: {
+  //   //       authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
+  //   //     },
+  //   //   });
+  //   //   const resultData = await result.json();
+  //   //   if (resultData) {
+  //   //     setSearchKey(resultData);
+  //   //   }
+  //   // } else {
+  //   //   dispatch(getProduct());
+  //   // }
+  //   const key = e.target.value;
+  //   setSearchKey(key);
 
-    dispatch(searchProduct(key));
-  };
+  //   dispatch(searchProduct(key));
+
+  // };
+  useEffect(() => {
+    const debounceTimeout = setTimeout(() => {
+      if (searchKey !== "") {
+        dispatch(searchProduct(searchKey));
+      } else {
+        dispatch(getProduct());
+      }
+    }, 1000);
+    return () => {
+      clearTimeout(debounceTimeout);
+    };
+  }, [searchKey, dispatch]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [searchKey]);
 
   const handleDelete = async (productId) => {
     const response = await dispatch(deleteProduct(productId));
@@ -61,7 +80,7 @@ const ProductList = () => {
           type="text"
           className="p-2 w-100 h-100 border"
           placeholder="Search Product"
-          onChange={searchHandle}
+          onChange={(e) => setSearchKey(e.target.value)}
           value={searchKey}
         />
       </div>

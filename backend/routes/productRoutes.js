@@ -17,7 +17,7 @@ const router = Router();
 router.post(
   "/add-product",
   [
-    body("name", "name is already taken in database")
+    body("name", "Enter a valid name")
       .notEmpty()
       .withMessage(
         "The name should contain only letters and should be unique."

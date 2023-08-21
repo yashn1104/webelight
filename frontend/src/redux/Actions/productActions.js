@@ -37,7 +37,7 @@ export const getProduct = createAsyncThunk(
     });
     try {
       const result = await response.json();
-      console.log(result);
+      // console.log(result);
       return result;
     } catch (error) {
       return rejectWithValue(error);
