@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   getProduct,
@@ -15,9 +14,9 @@ const ProductList = () => {
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.products);
   const inputRef = useRef(null);
-  useEffect(() => {
-    dispatch(getProduct());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getProduct());
+  // }, [dispatch]);
 
   // const searchHandle = async (e) => {
   //   // const key = e.target.value;
